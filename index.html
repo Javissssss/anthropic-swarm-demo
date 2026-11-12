@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>Anthropic 风格模板 · 设计系统 + 页面样例</title>
+<style>
+/* ============================================================
+   设计令牌（改这里即可全局换肤）
+   ============================================================ */
+:root{
+  --bg:#F0EEE6;        /* 主背景 暖米白 */
+  --bg-2:#E8E4DA;      /* 次背景 / 卡片 */
+  --paper:#FAF9F5;     /* 纸张白（文档页） */
+  --ink:#191919;       /* 正文黑 */
+  --ink-2:#5E5D59;     /* 次文字 */
+  --ink-3:#9C9A92;     /* 注释灰 */
+  --rule:#C9C5BA;      /* 细分隔线 */
+  --coral:#D97757;     /* 主强调 珊瑚橙 */
+  --coral-l:#EBC2B0;   /* 珊瑚浅 */
+  --coral-xl:#F2DDD2;  /* 珊瑚极浅 */
+  --sage:#BCCBA9;      /* 鼠尾草绿 */
+  --sage-l:#D7E0CB;
+  --sand:#E3DACB;      /* 沙色 */
+  --sky:#C6D3DE;       /* 雾蓝 */
+  --navy:#2F4A6B;      /* 深蓝（点缀，少用） */
+  --sans:"Inter","Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif;
+  --serif:"Tiempos Text","Georgia","Noto Serif SC","Source Han Serif SC","Songti SC","SimSun",serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#DAD6CC;font-family:var(--sans);color:var(--ink);padding:40px 0 80px}
+h1.doc{font:600 22px var(--sans);text-align:center;margin-bottom:6px}
+p.doc{font:14px var(--serif);text-align:center;color:var(--ink-2);margin-bottom:30px}
+
+/* ---------- 画布：16:9 ---------- */
+.slide{width:1280px;height:720px;margin:0 auto 36px;background:var(--bg);position:relative;overflow:hidden;box-shadow:0 2px 14px rgba(0,0,0,.08)}
+.pad{position:absolute;inset:64px 72px 56px}
+/* 页脚 */
+.foot{position:absolute;left:72px;right:72px;bottom:24px;display:flex;justify-content:space-between;font:11px var(--sans);color:var(--ink-3);letter-spacing:.02em}
+
+/* ---------- 字体层级 ---------- */
+.t-display{font:600 64px/1.05 var(--sans);letter-spacing:-.02em}
+.t-h1{font:600 34px/1.2 var(--sans);letter-spacing:-.01em}
+.t-h2{font:600 22px/1.3 var(--sans)}
+.t-h3{font:600 15px/1.4 var(--sans)}
+.t-body{font:16px/1.65 var(--serif);color:var(--ink)}
+.t-small{font:12px/1.5 var(--sans);color:var(--ink-2)}
+.t-note{font:10.5px/1.5 var(--sans);color:var(--ink-3)}
+.mute{color:var(--ink-3)}
+.hl{background:#F5E7A6;padding:0 2px}          /* 荧光笔高亮 */
+
+/* ---------- 组件 ---------- */
+.box{border:1px solid var(--ink);display:inline-block;padding:4px 10px;font:600 15px var(--sans);background:var(--bg)}
+.card{border-radius:4px;display:flex;align-items:center;justify-content:center;font:14px var(--sans);text-align:center}
+.c-coral{background:var(--coral-l);border:1px solid #CFA08C}
+.c-sand{background:var(--sand);border:1px solid #C7BCA9}
+.c-sage{background:var(--sage-l);border:1px solid #9DB086}
+table.spec{width:100%;border-collapse:collapse;font:13px/1.5 var(--sans)}
+table.spec td{border-top:1px solid var(--rule);padding:9px 0;vertical-align:top}
+table.spec tr:last-child td{border-bottom:1px solid var(--rule)}
+table.spec td:first-child{width:200px;font-weight:600;font-size:12px}
+.kpi{border-top:1px solid var(--ink);padding-top:14px}
+.kpi b{display:block;font:600 52px/1 var(--sans);letter-spacing:-.02em}
+.kpi span{font:13px/1.5 var(--serif);color:var(--ink-2)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin:0 6px 0 16px;vertical-align:-1px}
+
+/* 装饰：网格线页 */
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(var(--ink) 1px,transparent 1px),linear-gradient(90deg,var(--ink) 1px,transparent 1px);background-size:64px 64px;opacity:.55}
+/* 装饰：点阵 */
+.dots{position:absolute;inset:0;background-image:radial-gradient(var(--ink) 1.1px,transparent 1.3px);background-size:14px 14px;opacity:.35}
+/* 色板展示 */
+.sw{display:flex;gap:14px;margin-top:22px}
+.sw div{width:120px}
+.sw div i{display:block;height:80px;border-radius:3px;border:1px solid rgba(0,0,0,.08);margin-bottom:8px}
+.sw div b{font:600 12px var(--sans);display:block}
+.sw div span{font:11px var(--sans);color:var(--ink-3)}
+</style>
+
+<style>
+/* 页面本身保持不变；此处只提供 Swarm 的启动入口。 */
+.swarm-launcher{position:fixed;right:20px;bottom:20px;z-index:2147483000;display:flex;align-items:center;gap:10px;padding:8px 8px 8px 14px;border:1px solid #d3c9bb;border-radius:12px;background:rgba(250,249,245,.97);box-shadow:0 8px 32px rgba(25,25,25,.14);font:12px/1.4 "Microsoft YaHei",sans-serif;color:#5e5d59}
+.swarm-launcher button{border:0;border-radius:7px;padding:9px 13px;background:#191919;color:#fff;font:600 12px "Microsoft YaHei",sans-serif;cursor:pointer}
+.swarm-launcher button:hover{background:#ad6149}.swarm-launcher button:focus-visible{outline:3px solid #d97757;outline-offset:3px}.swarm-launcher button:disabled{opacity:.65;cursor:wait}
+@media print{.swarm-launcher{display:none!important}}
+</style>
+</head>
+<body>
+<h1 class="doc">Anthropic 风格模板</h1>
+<p class="doc">暖米白底 · 无衬线标题 + 衬线正文 · 低饱和珊瑚/鼠尾草配色 · 细线极简图表。复制任意 &lt;section class="slide"&gt; 即可复用。</p>
+
+<!-- 00 设计系统 -->
+<section class="slide">
+  <div class="pad">
+    <div class="t-h1">设计系统</div>
+    <div class="t-small" style="margin-top:6px">Design tokens：改 :root 变量即可全局生效</div>
+    <div class="sw">
+      <div><i style="background:var(--bg)"></i><b>Background</b><span>#F0EEE6</span></div>
+      <div><i style="background:var(--ink)"></i><b>Ink</b><span>#191919</span></div>
+      <div><i style="background:var(--coral)"></i><b>Coral 强调</b><span>#D97757</span></div>
+      <div><i style="background:var(--coral-l)"></i><b>Coral Light</b><span>#EBC2B0</span></div>
+      <div><i style="background:var(--sage)"></i><b>Sage</b><span>#BCCBA9</span></div>
+      <div><i style="background:var(--sand)"></i><b>Sand</b><span>#E3DACB</span></div>
+      <div><i style="background:var(--sky)"></i><b>Sky</b><span>#C6D3DE</span></div>
+      <div><i style="background:var(--navy)"></i><b>Navy 点缀</b><span>#2F4A6B</span></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:44px">
+      <div>
+        <div class="t-display" style="font-size:44px">标题 Sans 600</div>
+        <div class="t-h2" style="margin-top:12px">二级标题 22px / 600</div>
+        <div class="t-h3" style="margin-top:8px">三级标题 15px / 600</div>
+      </div>
+      <div>
+        <p class="t-body">正文使用衬线体，16px / 行高 1.65。<span class="hl">关键句可用荧光笔高亮</span>，其余保持克制。</p>
+        <p class="t-small" style="margin-top:10px">辅助说明 12px 次灰色</p>
+        <p class="t-note" style="margin-top:6px">注释 / 数据来源 10.5px 浅灰，放在图表左下角</p>
+      </div>
+    </div>
+    <div class="t-note" style="margin-top:34px">规则：一页一个观点 · 强调色单页不超过 1 种 · 线宽 1px · 不用阴影、渐变、3D · 留白 ≥ 40%</div>
+  </div>
+</section>
+
+<!-- 01 封面 -->
+<section class="slide">
+  <div style="position:absolute;left:0;top:0;bottom:0;width:120px;background:var(--navy)"></div>
+  <div style="position:absolute;right:0;top:0;bottom:0;width:360px;background:var(--sky)">
+    <svg width="360" height="720" viewBox="0 0 360 720" fill="none" stroke="#191919" stroke-width="1.2">
+      <path d="M40 720 C 80 520, 300 560, 260 360 S 120 120, 330 0"/>
+      <path d="M0 610 C 120 600, 160 500, 360 470"/>
+      <path d="M150 720 c 30-180 200-150 210-330" fill="#191919" opacity=".85"/>
+    </svg>
+  </div>
+  <div style="position:absolute;left:200px;top:280px;width:600px">
+    <div class="t-h1" style="font-size:40px;line-height:1.35">星湾业务单元<br>2024 年度风险管理复盘</div>
+    <div class="t-small" style="margin-top:22px">项目管理 · 项目负责人 A · 2024.10</div>
+  </div>
+</section>
+
+<!-- 02 章节页（网格） -->
+<section class="slide">
+  <div class="grid-bg"></div>
+  <div style="position:absolute;left:448px;top:192px;width:384px;height:256px;background:var(--bg);border:1px solid var(--ink);padding:40px 44px;display:flex;align-items:center">
+    <div class="t-display" style="font-size:52px">01<br>经营概览</div>
+  </div>
+</section>
+
+<!-- 03 左图右表（Offering summary 式） -->
+<section class="slide">
+  <div style="position:absolute;left:0;top:0;bottom:0;width:340px;background:var(--sage)">
+    <div class="t-h1" style="position:absolute;left:44px;top:52px;font-size:38px;line-height:1.1">指标<br>摘要</div>
+    <div class="dots" style="top:260px;opacity:.25"></div>
+  </div>
+  <div style="position:absolute;left:400px;right:72px;top:56px">
+    <table class="spec">
+      <tr><td>口径</td><td>含预收 / 扣预收加融资（两套口径分别列示）</td></tr>
+      <tr><td>应收账款</td><td>8.8 亿元，同比 +6.2%</td></tr>
+      <tr><td>存货</td><td>7.5 亿元，同比 −3.6%</td></tr>
+      <tr><td>DSO / DIO</td><td>29 天 / 47 天</td></tr>
+      <tr><td>呆滞库存</td><td>0.30 亿元，占比 4.0%</td></tr>
+      <tr><td>数据来源</td><td>业务平台 A；管理台账 B；计划系统 C</td></tr>
+      <tr><td>更新日期</td><td>2024-10-01</td></tr>
+      <tr><td>责任人</td><td>项目小组 A</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span></span><span>03</span></div>
+</section>
+
+<!-- 04 散点 + 同心弧（能力演进图） -->
+<section class="slide">
+  <div class="pad">
+    <div class="t-h2">风险事项：复杂度 × 处理周期</div>
+  </div>
+  <svg style="position:absolute;left:72px;top:120px" width="1136" height="520" viewBox="0 0 1136 520" font-family="Inter,Microsoft YaHei" font-size="12" fill="#191919">
+    <g stroke="#191919" stroke-width="1" fill="none">
+      <line x1="60" y1="20" x2="60" y2="460"/><line x1="60" y1="460" x2="1100" y2="460"/>
+      <path d="M1094 455 l6 5 -6 5"/><path d="M55 26 l5 -6 5 6"/>
+      <path d="M60 300 A 340 160 0 0 0 400 460" stroke-width=".8"/>
+      <path d="M60 160 A 640 300 0 0 0 700 460" stroke-width=".8"/>
+      <path d="M60 40 A 960 420 0 0 0 1020 460" stroke-width=".8"/>
+    </g>
+    <text x="20" y="240" transform="rotate(-90 20 240)" text-anchor="middle" font-size="13">复杂度</text>
+    <text x="580" y="500" text-anchor="middle" font-size="13">处理周期</text>
+    <text x="400" y="478" text-anchor="middle" font-weight="600">Q1</text>
+    <text x="700" y="478" text-anchor="middle" font-weight="600">Q2</text>
+    <text x="1020" y="478" text-anchor="middle" font-weight="600">Q3</text>
+    <g fill="none" stroke="#191919"><circle cx="135" cy="405" r="5"/><circle cx="225" cy="345" r="5"/><circle cx="330" cy="380" r="5"/><circle cx="185" cy="270" r="5"/></g>
+    <g fill="#191919" stroke="none"><circle cx="390" cy="300" r="5"/><circle cx="550" cy="355" r="5"/><circle cx="480" cy="205" r="5"/></g>
+    <g fill="#5B8A4A"><circle cx="755" cy="160" r="5"/><circle cx="835" cy="240" r="5"/><circle cx="920" cy="350" r="5"/><circle cx="725" cy="110" r="5"/></g>
+    <g text-anchor="middle" font-size="11">
+      <text x="135" y="425">事项 A</text><text x="225" y="335">事项 B</text><text x="330" y="400">事项 C</text><text x="185" y="260">事项 D</text>
+      <text x="390" y="290">事项 E</text><text x="550" y="375">事项 F</text><text x="480" y="195">事项 G</text>
+      <text x="755" y="150">事项 H</text><text x="835" y="230">事项 I</text><text x="920" y="370">事项 J</text><text x="725" y="100">事项 K</text>
+    </g>
+  </svg>
+  <div class="foot"><span>注：点位按展示用途重新设定。</span><span>04</span></div>
+</section>
+
+<!-- 05 嵌套矩形（成本-速度曲线式） -->
+<section class="slide">
+  <div class="pad"><div class="t-h2">风险等级与管控投入</div></div>
+  <div style="position:absolute;left:140px;top:150px;width:1000px;height:440px;border-left:1px solid var(--ink);border-bottom:1px solid var(--ink)">
+    <div style="position:absolute;left:0;bottom:0;width:100%;height:100%;background:#E2A994;border:1px solid #B97A63;border-radius:0 6px 0 0"><div style="position:absolute;right:30px;top:24px"><div class="t-h3">重大</div><div class="t-small">集团上报</div></div></div>
+    <div style="position:absolute;left:0;bottom:0;width:72%;height:80%;background:#EBBCA9;border:1px solid #C48C77;border-radius:0 6px 0 0"><div style="position:absolute;right:28px;top:22px"><div class="t-h3">较高</div><div class="t-small">事业部跟踪</div></div></div>
+    <div style="position:absolute;left:0;bottom:0;width:48%;height:58%;background:#F0CFC1;border:1px solid #CFA08C;border-radius:0 6px 0 0"><div style="position:absolute;right:26px;top:20px"><div class="t-h3">中等</div><div class="t-small">月度复核</div></div></div>
+    <div style="position:absolute;left:0;bottom:0;width:24%;height:38%;background:#F5E2D9;border:1px solid #D9B3A3;border-radius:0 6px 0 0"><div style="position:absolute;left:22px;top:20px"><div class="t-h3">一般</div><div class="t-small">自动预警</div></div></div>
+    <div class="t-small" style="position:absolute;left:-46px;top:200px;transform:rotate(-90deg)">影响程度</div>
+    <div class="t-small" style="position:absolute;left:480px;bottom:-28px">管控投入</div>
+  </div>
+</section>
+
+<!-- 06 曲线 + 标注点 -->
+<section class="slide">
+  <div class="pad" style="width:420px"><div class="t-h2">月度累计回款<br>达成节奏</div></div>
+  <svg style="position:absolute;left:60px;top:160px" width="1160" height="480" viewBox="0 0 1160 480" font-family="Inter,Microsoft YaHei" font-size="11" fill="#191919">
+    <line x1="0" y1="400" x2="1160" y2="400" stroke="#191919"/>
+    <path d="M60 385 L170 364 L350 321 L560 260 L790 188 L975 119 L1090 40" fill="none" stroke="#191919" stroke-width="1.2"/>
+    <g fill="#D97757" stroke="#191919" stroke-width="1">
+      <circle cx="170" cy="364" r="6"/><circle cx="350" cy="321" r="6"/><circle cx="560" cy="260" r="6"/><circle cx="790" cy="188" r="6"/><circle cx="975" cy="119" r="6"/><circle cx="1090" cy="40" r="6"/>
+    </g>
+    <g text-anchor="middle"><text x="170" y="344">1-5 日<tspan x="170" dy="14">10%</tspan></text><text x="350" y="301">6-10 日<tspan x="350" dy="14">22%</tspan></text>
+      <text x="560" y="240">11-15 日<tspan x="560" dy="14">39%</tspan></text><text x="790" y="168">16-20 日<tspan x="790" dy="14">59%</tspan></text>
+      <text x="935" y="112" text-anchor="end">21-25 日 · 78%</text><text x="1070" y="34" text-anchor="end">月末 · 100%</text></g>
+    <text x="170" y="430" text-anchor="middle" fill="#5E5D59" font-size="12">月初</text><text x="1090" y="430" text-anchor="middle" fill="#5E5D59" font-size="12">月末</text>
+  </svg>
+  <div class="foot"><span>数据来源：管理台账 B。</span><span>06</span></div>
+</section>
+
+<!-- 07 三列卡片矩阵 -->
+<section class="slide">
+  <div style="position:absolute;left:72px;right:72px;top:70px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    <div class="t-h3" style="text-align:center">应收</div><div class="t-h3" style="text-align:center">存货</div><div class="t-h3" style="text-align:center">责任制指标</div>
+    <div style="display:grid;gap:14px;grid-template-rows:240px 240px">
+      <div class="card c-coral">逾期账款</div><div class="card c-coral">信用额度</div></div>
+    <div style="display:grid;gap:14px;grid-template-rows:240px 240px">
+      <div class="card c-sand">呆滞库存</div><div class="card c-sand">账外库存</div></div>
+    <div style="display:grid;gap:10px;grid-template-rows:repeat(6,1fr)">
+      <div class="card c-sage">DSO</div><div class="card c-sage">DIO</div><div class="card c-sage" style="font-weight:600;margin:0 -12px">现金周期</div>
+      <div class="card c-sage">资产减值</div><div class="card c-sage">坏账率</div><div class="card c-sage">及其他</div></div>
+  </div>
+  <div class="foot"><span></span><span>07</span></div>
+</section>
+
+<!-- 08 议程：渐进高亮 -->
+<section class="slide">
+  <div style="position:absolute;left:0;right:0;bottom:0;height:40px;background:var(--coral);opacity:.85"></div>
+  <div style="position:absolute;left:110px;top:170px">
+    <div class="t-h1 mute" style="color:#BDBAB0;line-height:1.4">回顾全年风险指标<br>拆解应收与存货</div>
+    <div class="t-h1 mute" style="color:#BDBAB0;line-height:1.4;margin-top:28px">复盘重点事项</div>
+    <div class="t-h1" style="line-height:1.4;margin-top:28px">明年管控重点<br>与资源需求</div>
+  </div>
+</section>
+
+<!-- 09 KPI 大数字 -->
+<section class="slide">
+  <div class="pad">
+    <div class="t-h2">关键指标</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:40px;margin-top:150px">
+      <div class="kpi"><b>8.8<small style="font-size:20px"> 亿</small></b><span>应收余额，同比 +6.2%</span></div>
+      <div class="kpi"><b>29<small style="font-size:20px"> 天</small></b><span>DSO，较目标慢 2 天</span></div>
+      <div class="kpi" style="border-color:var(--coral)"><b style="color:var(--coral)">4.0%</b><span>呆滞占比，超阈值 0.8pt</span></div>
+      <div class="kpi"><b>9/10</b><span>责任制指标已填报</span></div>
+    </div>
+  </div>
+  <div class="foot"><span>口径：含预收；来源 业务平台 A / 计划系统 C，截至 2024-09-30。</span><span>09</span></div>
+</section>
+
+<!-- 10 括号层级（Capability/Efficiency/Safety 式） -->
+<section class="slide">
+  <div style="position:absolute;right:0;top:0;bottom:0;width:480px;background:var(--sand)"><div class="dots"></div></div>
+  <svg style="position:absolute;left:150px;top:150px" width="300" height="420" font-family="Inter,Microsoft YaHei" fill="#191919">
+    <path d="M30 40 H10 V380 H30 M240 40 H260 V380 H240" stroke="#191919" fill="none"/>
+    <path d="M24 35 l6 5 -6 5 M246 375 l-6 5 6 5 M246 205 l-6 5 6 5" stroke="#191919" fill="none"/>
+    <text x="40" y="48" font-size="26" font-weight="600">识别</text>
+    <text x="40" y="218" font-size="26" font-weight="600">评估</text>
+    <text x="40" y="388" font-size="26" font-weight="600">处置</text>
+  </svg>
+  <div style="position:absolute;right:60px;top:240px;width:360px" class="t-body">闭环管理：每月识别新增风险，按影响与概率评估等级，处置结果回写台账并纳入责任制考核。</div>
+</section>
+
+<!-- 11 文档页（纸张 + 高亮） -->
+<section class="slide">
+  <div style="position:absolute;left:220px;right:220px;top:44px;bottom:0;background:var(--paper);padding:56px 64px">
+    <div class="t-small" style="text-align:right">2024 年 10 月</div>
+    <div class="t-h2" style="margin-top:20px">一份可执行的风险管控备忘</div>
+    <p class="t-body" style="margin-top:16px">本年度的工作重点是<span class="hl">完善资料核验与跨团队沟通机制</span>。目标是按周期完成事项跟踪，并记录每一项任务的处理状态：</p>
+    <ul class="t-small" style="margin:16px 0 0 18px;line-height:2;color:var(--ink-2)">
+      <li>核对资料完整性</li><li>定期复核事项进展</li><li>异常情况说明与跟踪</li><li>结果记录于计划系统 C</li>
+    </ul>
+  </div>
+</section>
+
+
+<div class="swarm-launcher" role="region" aria-label="Swarm 动画控制">
+  <span id="swarm-message" role="status" aria-live="polite">正在加载光标重建效果…</span>
+  <button type="button" id="swarm-start">播放效果</button>
+</div>
+<script>
+(() => {
+  const button = document.getElementById('swarm-start');
+  const message = document.getElementById('swarm-message');
+  const source = 'https://cdn.jsdelivr.net/gh/DhvanilPatel/swarm-cursors@main/swarm-rebuild/swarm.js';
+  let loading = false;
+  function play() {
+    if (loading) return;
+    if (window.__swarmRebuild) {
+      if (window.__swarmRebuild.app) window.__swarmRebuild.stop(false);
+      window.__swarmRebuild.start();
+      message.textContent = '按 Esc 可退出动画';
+      return;
+    }
+    loading = true; button.disabled = true;
+    message.textContent = '正在联网加载动画…';
+    const script = document.createElement('script');
+    script.src = source;
+    script.onload = () => {
+      loading = false; button.disabled = false;
+      message.textContent = window.__swarmRebuild ? '按 Esc 可退出动画' : '动画加载失败，请重试';
+    };
+    script.onerror = () => {
+      loading = false; button.disabled = false;
+      script.remove();
+      message.textContent = '加载失败，请检查网络后重试';
+    };
+    document.body.appendChild(script);
+  }
+  button.addEventListener('click', play);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    message.textContent = '动画已待命，点击播放';
+  } else {
+    window.addEventListener('load', play, {once:true});
+  }
+})();
+</script>
+</body>
+</html>
